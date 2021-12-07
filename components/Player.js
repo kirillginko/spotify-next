@@ -13,7 +13,6 @@ import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { currentTrackIdState, isPlayingState } from "../atoms/songAtom";
-import { currentDeviceIdState } from "../atoms/deviceAtom";
 import useSongInfo from "../hooks/useSongInfo";
 import useSpotify from "../hooks/useSpotify";
 
@@ -23,8 +22,6 @@ function Player() {
   const [currentTrackId, setCurrentTrackId] =
     useRecoilState(currentTrackIdState);
   const [isPlaying, setIsPlaying] = useRecoilState(isPlayingState);
-  const [currentDeviceId, setCurrentDeviceId] =
-    useRecoilState(currentDeviceIdState);
   const [volume, setVolume] = useState(50);
 
   const songInfo = useSongInfo(currentTrackId);
@@ -51,20 +48,6 @@ function Player() {
       }
     });
   };
-
-  useEffect(() => {
-    spotifyApi.getMyDevices().then(
-      function (data) {
-        let device = data.body.devices[0].id;
-        setCurrentDeviceId(device);
-        console.log(device);
-      },
-      function (err) {
-        console.log("Something went wrong!", err);
-      }
-    );
-  }, [currentTrackId]);
-  console.log(currentDeviceId);
 
   useEffect(() => {
     if (spotifyApi.getAccessToken() && !currentTrackId) {
@@ -107,12 +90,12 @@ function Player() {
         {isPlaying ? (
           <PauseIcon
             className="w-10 h-10 cursor-pointer hover:scale-125 transition transform duration-100 ease-out text-[#18D860]"
-            // onClick={handlePlayPause}
+            onClick={handlePlayPause}
           />
         ) : (
           <PlayIcon
             className="w-10 h-10 cursor-pointer hover:scale-125 transition transform duration-100 ease-out"
-            // onClick={handlePlayPause}
+            onClick={handlePlayPause}
           />
         )}
         <FastForwardIcon className="w-5 h-5 cursor-pointer hover:scale-125 transition transform duration-100 ease-out" />
